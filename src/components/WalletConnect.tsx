@@ -12,7 +12,7 @@ export default function WalletConnect() {
   if (isConnected && account) {
     return (
       <div className="flex items-center gap-3">
-        <span className="text-sm text-black">
+        <span className="text-sm text-gray-600">
           {formatAddress(account)}
         </span>
         <button

@@ -28,6 +28,7 @@ interface EthereumProvider {
 }
 
 
+
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
 export const useWallet = () => {

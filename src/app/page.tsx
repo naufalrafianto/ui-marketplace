@@ -1,23 +1,31 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getContract } from '@/lib/contract';
+import { useWallet } from '@/context/WalletContext';
+import { getContract, isContractConfigured } from '@/lib/contract';
 import EventCard from '@/components/EventCard';
 import { Event } from '@/types';
-import { useWallet } from '@/context/WalletContext';
+import { ethers } from 'ethers';
 
 export default function Home() {
   const { account, provider, signer, isConnected } = useWallet();
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState<number | null>(null);
+  const [contractConfigured, setContractConfigured] = useState(false);
 
   useEffect(() => {
-    loadEvents();
-  }, [provider]);
+    setContractConfigured(isContractConfigured());
+  }, []);
+
+  useEffect(() => {
+    if (contractConfigured) {
+      loadEvents();
+    }
+  }, [provider, contractConfigured]);
 
   const loadEvents = async () => {
-    if (!provider) return;
+    if (!provider || !contractConfigured) return;
 
     try {
       const contract = getContract(provider);
@@ -72,20 +80,51 @@ export default function Home() {
       await tx.wait();
       alert('Ticket purchased successfully!');
       loadEvents(); // Refresh events
-    } catch (error) {
+    } catch (error: any) {
       console.error('Purchase failed:', error);
-      alert('Purchase failed. Please try again.');
+
+      let errorMessage = 'Purchase failed. Please try again.';
+      if (error.reason) {
+        errorMessage = `Error: ${error.reason}`;
+      } else if (error.message.includes('user rejected')) {
+        errorMessage = 'Transaction cancelled by user.';
+      } else if (error.message.includes('insufficient funds')) {
+        errorMessage = 'Insufficient funds for transaction.';
+      }
+
+      alert(errorMessage);
     } finally {
       setPurchasing(null);
     }
   };
+
+  if (!contractConfigured) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+          <h2 className="text-xl font-semibold text-red-800 mb-2">
+            Contract Not Configured
+          </h2>
+          <p className="text-red-700 mb-4">
+            The smart contract address is not configured. Please:
+          </p>
+          <ol className="text-left text-red-700 space-y-2 max-w-md mx-auto">
+            <li>1. Deploy your smart contract to a blockchain network</li>
+            <li>2. Create a <code className="bg-red-100 px-1 rounded">.env.local</code> file in your project root</li>
+            <li>3. Add: <code className="bg-red-100 px-1 rounded">NEXT_PUBLIC_CONTRACT_ADDRESS=your_contract_address_here</code></li>
+            <li>4. Restart your development server</li>
+          </ol>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-black">Loading events...</p>
+          <p className="text-gray-600">Loading events...</p>
         </div>
       </div>
     );
@@ -95,7 +134,7 @@ export default function Home() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Available Events</h1>
-        <p className="text-black">Discover and purchase tickets for upcoming events</p>
+        <p className="text-gray-600">Discover and purchase tickets for upcoming events</p>
       </div>
 
       {!isConnected && (
@@ -108,7 +147,7 @@ export default function Home() {
 
       {events.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-black">No events available at the moment</p>
+          <p className="text-gray-600">No events available at the moment</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
