@@ -21,7 +21,7 @@ export default function EventCard({ event, onPurchase, canPurchase = true }: Eve
     const isPastEvent = event.eventDate < Date.now() / 1000;
 
     return (
-        <div className="card">
+        <div className="card text-black">
             <div className="flex justify-between items-start mb-3">
                 <h3 className="text-lg font-semibold">{event.name}</h3>
                 <span className={`px-2 py-1 text-xs rounded ${event.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
@@ -30,7 +30,7 @@ export default function EventCard({ event, onPurchase, canPurchase = true }: Eve
                 </span>
             </div>
 
-            <p className="text-gray-600 mb-3">{event.description}</p>
+            <p className="text-black mb-3">{event.description}</p>
 
             <div className="space-y-2 mb-4">
                 <div className="flex justify-between text-sm">

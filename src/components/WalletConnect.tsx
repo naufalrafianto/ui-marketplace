@@ -1,18 +1,18 @@
 'use client';
 
-import { useWallet } from '@/hooks/useWallet';
+import { useWallet } from '@/context/WalletContext';
 
 export default function WalletConnect() {
-  const { account, connect, disconnect, loading } = useWallet();
+  const { account, connect, disconnect, loading, isConnected } = useWallet();
 
   const formatAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
-  if (account) {
+  if (isConnected && account) {
     return (
       <div className="flex items-center gap-3">
-        <span className="text-sm text-gray-600">
+        <span className="text-sm text-black">
           {formatAddress(account)}
         </span>
         <button

@@ -1,21 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 
-declare global {
-    interface Window {
-        ethereum?: EthereumProvider;
-    }
-}
-interface EthereumProvider {
-    isMetaMask?: boolean;
-    request(args: { method: string; params?: unknown[] }): Promise<unknown>;
-    on(event: 'accountsChanged', listener: (accounts: string[]) => void): void;
-    on(event: 'chainChanged', listener: (chainId: string) => void): void;
-    removeListener(event: 'accountsChanged', listener: (accounts: string[]) => void): void;
-    removeListener(event: 'chainChanged', listener: (chainId: string) => void): void;
-}
-
-
 export const useWallet = () => {
     const [account, setAccount] = useState<string>('');
     const [provider, setProvider] = useState<ethers.BrowserProvider | null>(null);
@@ -66,5 +51,5 @@ export const useWallet = () => {
         }
     }, []);
 
-    return { account, provider, signer, connect, disconnect, loading };
+    return { account, provider, signer, connect, disconnect, loading, };
 };

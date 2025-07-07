@@ -1,25 +1,33 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useWallet } from '@/hooks/useWallet';
-import { getContract } from '@/lib/contract';
+import { useWallet } from '@/context/WalletContext';
+import { getContract, isContractConfigured } from '@/lib/contract';
 import TicketCard from '@/components/TicketCard';
 import { Ticket, Event } from '@/types';
 
 export default function MyTickets() {
-    const { account, provider, signer } = useWallet();
+    const { account, provider, signer, isConnected } = useWallet();
     const [tickets, setTickets] = useState<Array<{ ticket: Ticket; event: Event }>>([]);
     const [loading, setLoading] = useState(true);
+    const [contractConfigured, setContractConfigured] = useState(false);
 
     useEffect(() => {
-        if (account) {
+        setContractConfigured(isContractConfigured());
+    }, []);
+
+    useEffect(() => {
+        if (account && contractConfigured) {
             loadTickets();
+        } else {
+            setLoading(false);
         }
-    }, [account, provider]);
+    }, [account, provider, contractConfigured]);
 
     const loadTickets = async () => {
-        if (!provider || !account) return;
+        if (!provider || !account || !contractConfigured) return;
 
+        setLoading(true);
         try {
             const contract = getContract(provider);
             const ticketIds = await contract.getUserTickets(account);
@@ -65,7 +73,22 @@ export default function MyTickets() {
         }
     };
 
-    if (!account) {
+    if (!contractConfigured) {
+        return (
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+                    <h2 className="text-xl font-semibold text-red-800 mb-2">
+                        Contract Not Configured
+                    </h2>
+                    <p className="text-red-700 mb-4">
+                        The smart contract address is not configured. Please check your environment variables.
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
+    if (!isConnected) {
         return (
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
@@ -85,7 +108,7 @@ export default function MyTickets() {
             <div className="flex items-center justify-center min-h-screen">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                    <p className="text-gray-600">Loading your tickets...</p>
+                    <p className="text-black">Loading your tickets...</p>
                 </div>
             </div>
         );
@@ -95,12 +118,20 @@ export default function MyTickets() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">My Tickets</h1>
-                <p className="text-gray-600">View and manage your purchased tickets</p>
+                <p className="text-black">View and manage your purchased tickets</p>
+                {account && (
+                    <p className="text-sm text-black mt-1">
+                        Connected as: {account.slice(0, 6)}...{account.slice(-4)}
+                    </p>
+                )}
             </div>
 
             {tickets.length === 0 ? (
                 <div className="text-center py-12">
-                    <p className="text-gray-600">You haven't purchased any tickets yet</p>
+                    <p className="text-black">You haven't purchased any tickets yet</p>
+                    <p className="text-sm text-black mt-2">
+                        Purchase tickets from the Events page to see them here
+                    </p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

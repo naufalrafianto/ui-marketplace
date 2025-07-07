@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import WalletConnect from "@/components/WalletConnect";
 import Link from "next/link";
+import { WalletProvider } from "@/context/WalletContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,33 +28,35 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <header className="bg-white shadow-sm border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center py-4">
-              <div className="flex items-center space-x-8">
-                <Link href="/" className="text-xl font-bold text-gray-900">
-                  TicketMarket
-                </Link>
-                <nav className="hidden md:flex space-x-6">
-                  <Link href="/" className="text-gray-600 hover:text-gray-900">
-                    Events
+        <WalletProvider>
+          <header className="bg-white shadow-sm border-b">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between items-center py-4">
+                <div className="flex items-center space-x-8">
+                  <Link href="/" className="text-xl font-bold text-gray-900">
+                    TicketMarket
                   </Link>
-                  <Link href="/create" className="text-gray-600 hover:text-gray-900">
-                    Create Event
-                  </Link>
-                  <Link href="/tickets" className="text-gray-600 hover:text-gray-900">
-                    My Tickets
-                  </Link>
-                </nav>
+                  <nav className="hidden md:flex space-x-6">
+                    <Link href="/" className="text-gray-600 hover:text-gray-900">
+                      Events
+                    </Link>
+                    <Link href="/create" className="text-gray-600 hover:text-gray-900">
+                      Create Event
+                    </Link>
+                    <Link href="/tickets" className="text-gray-600 hover:text-gray-900">
+                      My Tickets
+                    </Link>
+                  </nav>
+                </div>
+                <WalletConnect />
               </div>
-              <WalletConnect />
             </div>
-          </div>
-        </header>
+          </header>
 
-        <main className="min-h-screen bg-gray-50">
-          {children}
-        </main>
+          <main className="min-h-screen bg-gray-50">
+            {children}
+          </main>
+        </WalletProvider>
       </body>
     </html>
   );

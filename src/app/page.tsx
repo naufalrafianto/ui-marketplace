@@ -1,14 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useWallet } from '@/hooks/useWallet';
 import { getContract } from '@/lib/contract';
 import EventCard from '@/components/EventCard';
 import { Event } from '@/types';
-import { ethers } from 'ethers';
+import { useWallet } from '@/context/WalletContext';
 
 export default function Home() {
-  const { account, provider, signer } = useWallet();
+  const { account, provider, signer, isConnected } = useWallet();
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState<number | null>(null);
@@ -86,7 +85,7 @@ export default function Home() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading events...</p>
+          <p className="text-black">Loading events...</p>
         </div>
       </div>
     );
@@ -96,10 +95,10 @@ export default function Home() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Available Events</h1>
-        <p className="text-gray-600">Discover and purchase tickets for upcoming events</p>
+        <p className="text-black">Discover and purchase tickets for upcoming events</p>
       </div>
 
-      {!account && (
+      {!isConnected && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
           <p className="text-yellow-800">
             Please connect your wallet to purchase tickets
@@ -109,7 +108,7 @@ export default function Home() {
 
       {events.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-600">No events available at the moment</p>
+          <p className="text-black">No events available at the moment</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -118,7 +117,7 @@ export default function Home() {
               key={event.eventId}
               event={event}
               onPurchase={handlePurchase}
-              canPurchase={!!account && purchasing !== event.eventId}
+              canPurchase={isConnected && purchasing !== event.eventId}
             />
           ))}
         </div>

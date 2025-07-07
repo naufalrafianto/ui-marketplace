@@ -14,7 +14,7 @@ export default function TicketCard({ ticket, event, onUse, canUse = false }: Tic
 
     return (
         <div className="card">
-            <div className="flex justify-between items-start mb-3">
+            <div className="flex justify-between items-start mb-3 text-black">
                 <h3 className="text-lg font-semibold">{event.name}</h3>
                 <span className={`px-2 py-1 text-xs rounded ${ticket.isUsed ? 'bg-gray-100 text-gray-800' : 'bg-blue-100 text-blue-800'
                     }`}>
@@ -22,7 +22,7 @@ export default function TicketCard({ ticket, event, onUse, canUse = false }: Tic
                 </span>
             </div>
 
-            <div className="space-y-2 mb-4">
+            <div className="space-y-2 mb-4 text-black/75">
                 <div className="flex justify-between text-sm">
                     <span>Token ID:</span>
                     <span className="font-medium">#{ticket.tokenId}</span>
