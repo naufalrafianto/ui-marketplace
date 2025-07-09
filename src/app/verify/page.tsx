@@ -134,7 +134,7 @@ export default function VerifyTickets() {
         const hoursDiff = timeDiff / (1000 * 3600);
 
         // Event dapat digunakan 1 jam sebelum hingga 6 jam setelah event
-        return hoursDiff >= -6 && hoursDiff <= 1;
+        return hoursDiff >= -6 && hoursDiff <= 6;
     };
 
     if (!contractConfigured) {
@@ -171,16 +171,16 @@ export default function VerifyTickets() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">Ticket Verification</h1>
-                <p className="text-gray-600">Scan and verify event tickets</p>
+                <p className="text-black">Scan and verify event tickets</p>
                 {account && (
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-black mt-1">
                         Connected as: {account.slice(0, 6)}...{account.slice(-4)}
                     </p>
                 )}
             </div>
 
             {/* Search Form */}
-            <div className="card mb-8">
+            <div className="card mb-8 text-black">
                 <h2 className="text-xl font-semibold mb-4">Search Ticket</h2>
                 <div className="flex gap-4">
                     <input
@@ -206,10 +206,10 @@ export default function VerifyTickets() {
                     <div className="flex justify-between items-start mb-4">
                         <h2 className="text-xl font-semibold">Ticket Information</h2>
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${ticket.isUsed
-                                ? 'bg-red-100 text-red-800'
-                                : isEventActive()
-                                    ? 'bg-green-100 text-green-800'
-                                    : 'bg-yellow-100 text-yellow-800'
+                            ? 'bg-red-100 text-red-800'
+                            : isEventActive()
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-yellow-100 text-yellow-800'
                             }`}>
                             {ticket.isUsed ? '❌ Used' : isEventActive() ? '✅ Valid' : '⏳ Not Active'}
                         </span>
@@ -221,22 +221,22 @@ export default function VerifyTickets() {
                             <h3 className="font-semibold text-gray-900 mb-3">Ticket Details</h3>
                             <div className="space-y-2">
                                 <div className="flex justify-between">
-                                    <span className="text-gray-600">Token ID:</span>
+                                    <span className="text-black">Token ID:</span>
                                     <span className="font-medium">#{ticket.tokenId}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-gray-600">Owner:</span>
+                                    <span className="text-black">Owner:</span>
                                     <span className="font-medium text-xs">
                                         {ticket.owner.slice(0, 8)}...{ticket.owner.slice(-6)}
                                     </span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-gray-600">Purchased:</span>
+                                    <span className="text-black">Purchased:</span>
                                     <span className="font-medium">{formatDateTime(ticket.purchaseDate)}</span>
                                 </div>
                                 {ticket.isUsed && (
                                     <div className="flex justify-between">
-                                        <span className="text-gray-600">Used:</span>
+                                        <span className="text-black">Used:</span>
                                         <span className="font-medium">{formatDateTime(ticket.usageDate)}</span>
                                     </div>
                                 )}
@@ -248,19 +248,19 @@ export default function VerifyTickets() {
                             <h3 className="font-semibold text-gray-900 mb-3">Event Details</h3>
                             <div className="space-y-2">
                                 <div>
-                                    <span className="text-gray-600">Event:</span>
+                                    <span className="text-black">Event:</span>
                                     <div className="font-medium">{event.name}</div>
                                 </div>
                                 <div>
-                                    <span className="text-gray-600">Description:</span>
+                                    <span className="text-black">Description:</span>
                                     <div className="font-medium text-sm">{event.description}</div>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-gray-600">Date:</span>
+                                    <span className="text-black">Date:</span>
                                     <span className="font-medium">{formatDateTime(event.eventDate)}</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-gray-600">Organizer:</span>
+                                    <span className="text-black">Organizer:</span>
                                     <span className="font-medium text-xs">
                                         {event.organizer.slice(0, 8)}...{event.organizer.slice(-6)}
                                     </span>
@@ -298,7 +298,7 @@ export default function VerifyTickets() {
                         ) : ticket.isUsed ? (
                             <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                                 <div className="flex items-center">
-                                    <span className="text-gray-600 mr-2">✓</span>
+                                    <span className="text-black mr-2">✓</span>
                                     <span className="text-gray-800 font-medium">
                                         This ticket has already been used
                                     </span>
@@ -326,7 +326,7 @@ export default function VerifyTickets() {
                             >
                                 {verifying ? 'Verifying Ticket...' : '🎫 Use Ticket'}
                             </button>
-                            <p className="text-xs text-gray-500 mt-2 text-center">
+                            <p className="text-xs text-black mt-2 text-center">
                                 ⚠️ Warning: Using this ticket will permanently burn it
                             </p>
                         </div>
@@ -334,25 +334,7 @@ export default function VerifyTickets() {
                 </div>
             )}
 
-            {/* Instructions */}
-            <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-blue-900 mb-3">How to verify tickets:</h3>
-                <div className="space-y-2 text-blue-800">
-                    <p>• Enter the Ticket ID (Token ID) in the search box above</p>
-                    <p>• Check the ticket status and event details</p>
-                    <p>• If you're authorized and the event is active, click "Use Ticket"</p>
-                    <p>• The ticket will be permanently burned after use to prevent reuse</p>
-                </div>
 
-                <div className="mt-4 pt-4 border-t border-blue-200">
-                    <h4 className="font-semibold text-blue-900 mb-2">Authorization Requirements:</h4>
-                    <div className="space-y-1 text-sm text-blue-700">
-                        <p>• You must be the event organizer, OR</p>
-                        <p>• You must be an authorized verifier for the event</p>
-                        <p>• Tickets can only be used during the event access window</p>
-                    </div>
-                </div>
-            </div>
         </div>
     );
 }
